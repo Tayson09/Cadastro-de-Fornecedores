@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Cadastro de Fornecedores</title>
+</head>
+<body>
+    <h1>Cadastro de Fornecedores</h1>
+    <div class="basic-date">
+        <h2>Informações Básicas</h2>
+        <form action="submit">
+            <label for="name">Nome:</label>
+            <input type="text" id="name" placeholder="Digite aqui o nome" required>
+
+            <label for="cnpj">CNPJ:</label>
+            <input type="text" id="cnpj" placeholder="Digite aqui o CNPJ" required>
+
+            <label for="repr">Representante:</label>
+            <input type="text" id="repr" placeholder="Digite o nome do representante" required>
+
+            <h2>Informações de Contato</h2>
+        
+            <label for="address">Endereço:</label>
+            <input type="text" id="address" placeholder="Digite aqui o endereço" required>
+
+            <label for="phone">Telefone:</label>
+            <input type="text" id="phone" placeholder="Digite aqui o telefone" required>
+
+            <label for="website">Site da Empresa:</label>
+            <input type="text" id="website" placeholder="(Opcional) Digite a URL da empresa">
+
+            <input type="submit" value="Cadastrar">
+        </form>
+    </div>
+
+    <div class="contact-date"></div>
+
+    <footer>
+        <p>Todos os direitos reservados &copy; 2024</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
