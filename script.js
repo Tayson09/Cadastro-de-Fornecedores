@@ -1,88 +1,108 @@
-function carregarFornecedores() {
-    const fornecedoresSalvos = localStorage.getItem('fornecedores');
-    return fornecedoresSalvos ? JSON.parse(fornecedoresSalvos) : [];
-}
+document.addEventListener('DOMContentLoaded', () => {
+    let fornecedores = [];
 
-function salvarFornecedores() {
-    localStorage.setItem('fornecedores', JSON.stringify(fornecedores));
-}
+    document.getElementById('form-cadastro').addEventListener('submit', function(event) {
+        event.preventDefault();
 
-let fornecedores = carregarFornecedores();
-let fornecedorEmEdicao = null;
+        const nome = document.getElementById('name').value.trim();
+        const cnpj = document.getElementById('cnpj').value.trim();
+        const telefone = document.getElementById('phone').value.trim();
 
-function cadastrarFornecedor(event) {
-    event.preventDefault();
-    
-    const nome = document.getElementById('name').value;
-    const cnpj = document.getElementById('cnpj').value;
-    const representante = document.getElementById('repr').value;
-    const endereco = document.getElementById('address').value;
-    const telefone = document.getElementById('phone').value;
-    const website = document.getElementById('website').value;
+        if (!nome || !validarCNPJ(cnpj) || !validarTelefone(telefone)) {
+            exibirMensagem('Por favor, preencha todos os campos corretamente.', 'erro');
+            return;
+        }
 
-    const fornecedor = {
-        id: fornecedorEmEdicao ? fornecedorEmEdicao.id : Date.now(),
-        nome,
-        cnpj,
-        representante,
-        endereco,
-        telefone,
-        website
-    };
+        const fornecedorExistenteIndex = fornecedores.findIndex(fornecedor => fornecedor.cnpj === cnpj);
 
-    if (fornecedorEmEdicao) {
-        const index = fornecedores.findIndex(f => f.id === fornecedorEmEdicao.id);
-        fornecedores[index] = fornecedor;
-        fornecedorEmEdicao = null;
-    } else {
-        fornecedores.push(fornecedor);
-    }
+        if (fornecedorExistenteIndex !== -1) {
+            exibirMensagem('Fornecedor com este CNPJ já existe!', 'erro');
+            return;
+        }
 
-    salvarFornecedores();
-    document.querySelector('form').reset();
-    listarFornecedores();
-}
+        fornecedores.push({
+            nome,
+            cnpj,
+            telefone
+        });
 
-function listarFornecedores() {
-    const lista = document.querySelector('.contact-date');
-    lista.innerHTML = '';
-
-    fornecedores.forEach(fornecedor => {
-        const fornecedorItem = document.createElement('div');
-        fornecedorItem.classList.add('fornecedor-item');
-        fornecedorItem.innerHTML = `
-            <h3>${fornecedor.nome}</h3>
-            <p>CNPJ: ${fornecedor.cnpj}</p>
-            <p>Representante: ${fornecedor.representante}</p>
-            <p>Endereço: ${fornecedor.endereco}</p>
-            <p>Telefone: ${fornecedor.telefone}</p>
-            <p>Website: ${fornecedor.website}</p>
-            <button onclick="editarFornecedor(${fornecedor.id})">Editar</button>
-            <button onclick="excluirFornecedor(${fornecedor.id})">Excluir</button>
-        `;
-        lista.appendChild(fornecedorItem);
+        exibirMensagem('Fornecedor cadastrado com sucesso!', 'sucesso');
+        this.reset();
+        atualizarListaFornecedores();
     });
-}
 
-function editarFornecedor(id) {
-    fornecedorEmEdicao = fornecedores.find(f => f.id === id);
-    if (fornecedorEmEdicao) {
-        document.getElementById('name').value = fornecedorEmEdicao.nome;
-        document.getElementById('cnpj').value = fornecedorEmEdicao.cnpj;
-        document.getElementById('repr').value = fornecedorEmEdicao.representante;
-        document.getElementById('address').value = fornecedorEmEdicao.endereco;
-        document.getElementById('phone').value = fornecedorEmEdicao.telefone;
-        document.getElementById('website').value = fornecedorEmEdicao.website;
+    function validarCNPJ(cnpj) {
+        const cnpjFormatado = cnpj.replace(/[^\d]+/g, '');
+        return cnpjFormatado.length === 14;
     }
-}
 
-function excluirFornecedor(id) {
-    if (confirm('Tem certeza que deseja excluir este fornecedor?')) {
-        fornecedores = fornecedores.filter(f => f.id !== id);
-        salvarFornecedores();
-        listarFornecedores();
+    function validarTelefone(telefone) {
+        const telefoneFormatado = telefone.replace(/[^\d]+/g, '');
+        return telefoneFormatado.length >= 10 && telefoneFormatado.length <= 11;
     }
-}
 
-document.addEventListener('DOMContentLoaded', listarFornecedores);
-document.querySelector('form').addEventListener('submit', cadastrarFornecedor);
+    function exibirMensagem(mensagem, tipo = 'sucesso') {
+        const mensagemDiv = document.createElement('div');
+        mensagemDiv.className = `mensagem ${tipo}`;
+        mensagemDiv.textContent = mensagem;
+        document.body.appendChild(mensagemDiv);
+
+        setTimeout(() => {
+            mensagemDiv.remove();
+        }, 3000);
+    }
+
+    function atualizarListaFornecedores() {
+        const listaDiv = document.getElementById('fornecedores-lista');
+        listaDiv.innerHTML = '';
+
+        fornecedores.forEach((fornecedor, index) => {
+            const fornecedorItem = document.createElement('div');
+            fornecedorItem.className = 'fornecedor-item';
+            fornecedorItem.innerHTML = `
+                <h3>${fornecedor.nome}</h3>
+                <p><strong>CNPJ:</strong> ${fornecedor.cnpj}</p>
+                <p><strong>Telefone:</strong> ${fornecedor.telefone}</p>
+                <button class="btn-editar" data-index="${index}">Editar</button>
+                <button class="btn-excluir" data-index="${index}">Excluir</button>
+            `;
+            listaDiv.appendChild(fornecedorItem);
+        });
+
+        adicionarEventosBotoes();
+    }
+
+    function adicionarEventosBotoes() {
+        const botoesEditar = document.querySelectorAll('.btn-editar');
+        const botoesExcluir = document.querySelectorAll('.btn-excluir');
+
+        botoesEditar.forEach(botao => {
+            botao.addEventListener('click', editarFornecedor);
+        });
+
+        botoesExcluir.forEach(botao => {
+            botao.addEventListener('click', excluirFornecedor);
+        });
+    }
+
+    function editarFornecedor(event) {
+        const index = event.target.getAttribute('data-index');
+        const fornecedor = fornecedores[index];
+
+        document.getElementById('name').value = fornecedor.nome;
+        document.getElementById('cnpj').value = fornecedor.cnpj;
+        document.getElementById('phone').value = fornecedor.telefone;
+
+        // Remover fornecedor antigo para substituí-lo pelo novo
+        fornecedores.splice(index, 1);
+
+        exibirMensagem('Edite os campos e envie novamente.', 'sucesso');
+    }
+
+    function excluirFornecedor(event) {
+        const index = event.target.getAttribute('data-index');
+        fornecedores.splice(index, 1);
+        exibirMensagem('Fornecedor excluído com sucesso!', 'sucesso');
+        atualizarListaFornecedores();
+    }
+});
