@@ -7,6 +7,7 @@
     --card-background: #ffffff; /* Branco */
     --text-color: #333333; /* Cinza escuro */
     --border-color: #dfe4ea; /* Cinza claro */
+    --error-color: #e74c3c; /* Vermelho */
 }
 
 body {
@@ -15,6 +16,7 @@ body {
     margin: 0;
     padding: 0;
     color: var(--text-color);
+    line-height: 1.6;
 }
 
 h1 {
@@ -24,19 +26,30 @@ h1 {
     font-size: 2.5em;
 }
 
-.basic-date, .contact-date {
+.basic-info, .contact-info {
     background: var(--card-background);
     padding: 20px;
     margin: 20px auto;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 900px;
+    transition: all 0.3s ease-in-out;
 }
 
-h2 {
+.basic-info:hover, .contact-info:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+fieldset {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+legend {
+    font-size: 1.2em;
     color: var(--primary-color);
-    margin-top: 0;
-    font-size: 1.5em;
 }
 
 label {
@@ -46,7 +59,7 @@ label {
     font-weight: bold;
 }
 
-input[type="text"] {
+input[type="text"], input[type="url"] {
     width: 100%;
     padding: 12px;
     margin-bottom: 16px;
@@ -64,14 +77,15 @@ input[type="submit"] {
     border-radius: 8px;
     cursor: pointer;
     font-size: 1.1em;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 input[type="submit"]:hover {
-    background-color: darken(var(--primary-color), 10%);
+    background-color: #2980b9;
+    transform: scale(1.05);
 }
 
-.contact-date {
+.contact-info {
     margin: 20px auto;
     max-width: 900px;
 }
@@ -82,6 +96,11 @@ input[type="submit"]:hover {
     margin-bottom: 15px;
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.fornecedor-item:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .fornecedor-item h3 {
@@ -109,7 +128,7 @@ button {
 }
 
 button:hover {
-    background-color: darken(var(--secondary-color), 10%);
+    background-color: #27ae60;
 }
 
 button:nth-of-type(2) {
@@ -117,7 +136,7 @@ button:nth-of-type(2) {
 }
 
 button:nth-of-type(2):hover {
-    background-color: darken(var(--accent-color), 10%);
+    background-color: #c0392b;
 }
 
 footer {
@@ -129,8 +148,83 @@ footer {
     bottom: 0;
     width: 100%;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
 }
 
 footer p {
     margin: 0;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+
+    .basic-info, .contact-info {
+        padding: 15px;
+        margin: 15px auto;
+    }
+
+    fieldset {
+        padding: 10px;
+    }
+
+    input[type="text"], input[type="url"] {
+        padding: 10px;
+    }
+
+    input[type="submit"] {
+        font-size: 1em;
+        padding: 10px 20px;
+    }
+
+    button {
+        font-size: 0.85em;
+        padding: 8px 16px;
+    }
+}
+.mensagem {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 1.1em;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.mensagem.sucesso {
+    background-color: var(--secondary-color);
+}
+
+.mensagem.erro {
+    background-color: var(--accent-color);
+}
+.fornecedor-item {
+    background: var(--card-background);
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.fornecedor-item:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.fornecedor-item h3 {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 1.3em;
+}
+
+.fornecedor-item p {
+    margin: 6px 0;
+    color: var(--text-color);
+    font-size: 1em;
 }
